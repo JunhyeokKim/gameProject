@@ -36,14 +36,15 @@ window.requestAnimationFrame = function() {
 
 var img=new Image();
 var horses=[
-	{number:1, pos:{x:0, y:canvas.height/2},source_size: {w:32, h:32},
-	    target_size: {w:42, h:42}, sprite:{sprite_x:0,sprite_y:32}, dx:7  },
-	    {number:2, pos:{x:0, y:canvas.height/2+20},source_size: {w:32, h:32},
-		    target_size: {w:42, h:42}, sprite:{sprite_x:0,sprite_y:32}, dx:7  }
+	{number:1, pos:{x:0, y:canvas.height/2},source_size: {w:128, h:128},
+	    target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7, rank:1  },
+	    {number:2, pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
+		    target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7 ,rank:1 }
+	    
 
 ]
 
-img.src='img/player_sprites.png';
+img.src='img/horse-black.png';
 
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -89,11 +90,11 @@ function drawHorse() {						// 말 그리기
 		            horses[idx].source_size.w,
 		            horses[idx].source_size.h,
 		            horses[idx].pos.x,
-		            horses[idx].pos.y,
-		            32,
-		            32
+		            horses[idx].pos.y+32*idx,
+		            horses[idx].target_size.w,
+		            horses[idx].target_size.h
 		        );
-		    console.log("x pos"+horses[idx].pos.x);
+		    //console.log("x pos"+horses[idx].pos.x);
 		    ctx.closePath();
 		
 	}
@@ -134,15 +135,22 @@ function draw() {
     collisionDetection();
     // object position setting
     horseStatus=(horseStatus<3)?horseStatus+1:0;
-    console.log(horseStatus);
+    //console.log(horseStatus);
+    var rank=new Array();
     for(var idx=0; idx<horses.length; idx++){
+    rank.push(horses[idx].pos.x);
+    }
+    for(var idx=0; idx<horses.length; idx++){
+    horses[idx].rank=rank[idx];
     horses[idx].dx+=Math.random();
     horses[idx].pos.x+=horses[idx].dx;
-    if(horses[idx].pos.x>canvas.width)
+    if(horses[idx].pos.x>canvas.width || horses[idx].pos.x<0)
     	horses[idx].dx*=-1;
-    horses[idx].sprite.sprite_x=(32*horseStatus);
+    horses[idx].sprite.sprite_x=(horses[idx].target_size.w*horseStatus);
+    
     
     }
+    console.log(rank);
     // loop
     setTimeout(function() {
         requestAnimationFrame(draw);
