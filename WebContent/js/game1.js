@@ -73,13 +73,13 @@ function collisionDetection() {
 	if(!gameOver)
 	for(var idx=0; idx<horses.length; idx++){
 		if(horses[idx].x>=canvas.width*0.8){
-			alert(horses[idx].number+"번 말");
+			alert(horses[idx].number+"踰� 留�");
 			gameOver=true;
 		}
 	}
 }
 
-function drawHorse() {						// 말 그리기
+function drawHorse() {						// 留� 洹몃━湲�
 	for(var idx=0; idx<horses.length ;idx++) {
 		 ctx.beginPath();
 		    ctx.drawImage(
@@ -139,7 +139,6 @@ function draw() {
     horses[idx].dx+=Math.random();
     horses[idx].pos.x+=horses[idx].dx;
     if(horses[idx].pos.x>canvas.width)
-    	horses[idx].dx*=-1;
     horses[idx].sprite.sprite_x=(32*horseStatus);
     
     }
