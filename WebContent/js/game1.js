@@ -2,9 +2,13 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var gameOver=false;
 var horseStatus=0;
+var bg_pos = {
+		x:0, y:0, swidth:1536, sheight:1536, dx:0, dy:0, dwidth:canvas.width, dheight:canvas.height
+};
 
 
 var img=new Image();
+var backImg=new Image();
 var horses=[
 	{
 		number:1, pos:{x:0, y:canvas.height/2},source_size: {w:128, h:128},
@@ -41,18 +45,18 @@ var horses=[
 	]
 
 img.src='img/horse-black.png';
-
+backImg.src='img/hihi.png';
 function collisionDetection() {
 	if(!gameOver)
 	for(var idx=0; idx<horses.length; idx++){
-		if(horses[idx].x>=canvas.width*0.8){
-			alert(horses[idx].number+"踰� 留�");
+		if(horses[idx].pos.x>=canvas.width*0.8){
+			alert(horses[idx].number+"번 말 우승!");
 			gameOver=true;
 		}
 	}
 }
 
-function drawHorse() {						// 留� 洹몃━湲�
+function drawHorse() {						// 말 그림
 	for(var idx=0; idx<horses.length ;idx++) {
 		 ctx.beginPath();
 		    ctx.drawImage(
@@ -73,16 +77,20 @@ function drawHorse() {						// 留� 洹몃━湲�
 }
 function drawBackground(){
 	ctx.beginPath();
-	ctx.fillRect(0, 0, canvas.width, canvas.height/2);
-	ctx.fillStyle='#207720';
-	ctx.fill();
-	ctx.closePath();
-	ctx.beginPath();
-	ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2);
-	ctx.fillStyle='#8d8bb3';
-	ctx.fill();
+	ctx.drawImage(
+			backImg,
+			bg_pos.x,
+			bg_pos.y,
+			bg_pos.swidth,
+			bg_pos.sheight,
+			bg_pos.dx,
+			bg_pos.dy,
+			bg_pos.dwidth,
+			bg_pos.dheight
+			);
 	ctx.closePath();
 }
+// swidth:1536, sheight:1536, dx:0, dy:0, dwidth:1000, dheight:1000
 
 function draw() {
 	
@@ -107,17 +115,18 @@ function draw() {
     	horses[idx].rank=rank.indexOf(horses[idx]);
     	horses[idx].dx+=Math.random();
     	horses[idx].pos.x+=horses[idx].dx;
-    	if(horses[idx].pos.x>canvas.width-400 || horses[idx].pos.x<0)
+    	if(horses[idx].pos.x<0)
     		horses[idx].dx*=-1;
-    	horses[idx].sprite.sprite_x=(horses[idx].target_size.w*horseStatus);
-    
-    
+    	horses[idx].sprite.sprite_x=(horses[idx].target_size.w*horseStatus);  
     }
-    console.log(rank[0].number);
+    if(bg_pos.x >= 3072) bg_pos.x =0 ;
+    else bg_pos.x += 24;
+    console.log(bg_pos);
     // configuration of FPS
     setTimeout(function() {
         requestAnimationFrame(draw);
-      }, 1000 / 20);
+      }, 0.1);
+
 }
 
 
