@@ -3,11 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link href="css/game.css" rel="stylesheet" type="text/css">
 <style type="Text/css">
 </style>
 <script src="http://code.jquery.com/jquery-1.10.2.js "></script>
 <body>
-	<canvas id="myCanvas" width="1536" height="1536"></canvas>
+	<div id="game-container">
+		<canvas id="game" width="1536" height="1000"></canvas>
+		<div id="game-menu" class="game-info">
+
+			<div class="menu-item menu-text" id="intro">
+				<p>Welcome to the Geeko run!</p>
+			</div>
+
+			<div class="menu-item menu-link" id="button-play3">SUSE Geeko
+				run</div>
+			<div class="menu-item menu-link" id="button-play4">The SCC
+				Jungle</div>
+
+			<div class="menu-item menu-text" id="help">
+				<p>Please use your arrow keys or pad controls to play.</p>
+			</div>
+
+		</div>
+	</div>
 </body>
 <script type="text/javascript" src="js/game1.js" charset="utf-8"></script>
 
