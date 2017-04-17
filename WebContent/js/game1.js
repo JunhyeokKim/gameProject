@@ -2,6 +2,7 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var gameOver=false;
 var horseStatus=0;
+var elapsedTime=0;
 var bg_pos = {
 		x:0, y:0, swidth:1536, sheight:1536, dx:0, dy:0, dwidth:canvas.width, dheight:canvas.height
 };
@@ -67,13 +68,26 @@ function drawHorse() {						// 말 그림
 		            horses[idx].source_size.h,
 		            horses[idx].pos.x,
 		            horses[idx].pos.y+32*idx,
-		            horses[idx].target_size.w,
-		            horses[idx].target_size.h
+		            horses[idx].target_size.w*2.2,
+		            horses[idx].target_size.h*2.2
 		        );
 		    // console.log("x pos"+horses[idx].pos.x);
 		    ctx.closePath();
 		
 	}
+}
+function drawElapasedTime(){
+	ctx.beginPath();
+	ctx.font="30px Arial";
+	ctx.fillText("남은 거리:"+(1500-elapsedTime)+"M", 100, 100, 100);
+	ctx.closePath();
+}
+function drawScoreBoard(){
+	ctx.beginPath();
+	ctx.fillStyle="rgba(200,100,100,0.3)";
+	ctx.fillRect(canvas.width-300, 100, 200, 600);
+	ctx.fill();
+	ctx.closePath();
 }
 function drawBackground(){
 	ctx.beginPath();
@@ -82,24 +96,29 @@ function drawBackground(){
 			bg_pos.x,
 			bg_pos.y,
 			bg_pos.swidth,
-			bg_pos.sheight,
+			bg_pos.sheight-140,
 			bg_pos.dx,
 			bg_pos.dy,
 			bg_pos.dwidth,
-			bg_pos.dheight
+			bg_pos.dheight/2
 			);
+	ctx.fillRect(0, bg_pos.dheight/2, canvas.width, canvas.height/2)
+	ctx.fillStyle="#804000";
+	ctx.fill();
 	ctx.closePath();
 }
-// swidth:1536, sheight:1536, dx:0, dy:0, dwidth:1000, dheight:1000
 
+// swidth:1536, sheight:1536, dx:0, dy:0, dwidth:1000, dheight:1000
 function draw() {
-	
+	elapsedTime++;
 	// canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // object drawing section
     drawBackground();
     drawHorse();
+    drawElapasedTime();
     collisionDetection();
+    drawScoreBoard();
     // object position setting
     horseStatus=(horseStatus<3)?horseStatus+1:0;
     // console.log(horseStatus);
@@ -113,19 +132,18 @@ function draw() {
   
     for(var idx=0; idx<horses.length; idx++){
     	horses[idx].rank=rank.indexOf(horses[idx]);
-    	horses[idx].dx+=Math.random();
+    	horses[idx].dx+=Math.random()*0.3;
     	horses[idx].pos.x+=horses[idx].dx;
-    	if(horses[idx].pos.x<0)
+    	if(horses[idx].pos.x<0 || horses[idx].pos.x>canvas.width-300)
     		horses[idx].dx*=-1;
     	horses[idx].sprite.sprite_x=(horses[idx].target_size.w*horseStatus);  
     }
-    if(bg_pos.x >= 3072) bg_pos.x =0 ;
-    else bg_pos.x += 24;
-    console.log(bg_pos);
+    if(bg_pos.x >= 3072) bg_pos.x =1 ;
+    else bg_pos.x += 12;
     // configuration of FPS
     setTimeout(function() {
         requestAnimationFrame(draw);
-      }, 0.1);
+      }, 1000/30);
 
 }
 
