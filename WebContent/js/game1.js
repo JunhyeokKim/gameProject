@@ -10,27 +10,27 @@ var background = {
 var horses=[
 	{
 		number:1,image:"img/horse-black.png", pos:{x:0, y:canvas.height/2},source_size: {w:128, h:128},
-		mini:{arc_x:160,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(255,100,0,0.5)",inCircle:false},
+		mini:{arc_x:180,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(255,100,0,0.5)",inCircle:false},
 		target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7, rank:1
 	},
 	{
 		number:2,image:"img/horse-brown.png", pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
-		mini:{arc_x:160,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(100,100,0,0.5)",inCircle:false},
+		mini:{arc_x:180,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(100,100,0,0.5)",inCircle:false},
 		target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7 ,rank:1
 	},
 	{
 		number:3,image:"img/horse-golden.png", pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
-		mini:{arc_x:160,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(0,100,255,0.5)", inCircle:false},
+		mini:{arc_x:180,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(0,100,255,0.5)", inCircle:false},
 		target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7 ,rank:1
 	},
 	{
 		number:4,image:"img/horse-gray.png", pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
-		mini:{arc_x:160,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(0,0,100,0.5)",inCircle:false},
+		mini:{arc_x:180,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(0,0,100,0.5)",inCircle:false},
 		target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7 ,rank:1
 	},
 	{
 		number:5,image:"img/horse-white.png", pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
-		mini:{arc_x:160,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(100,100,100,0.5)",inCircle:false},
+		mini:{arc_x:180,arc_y:80, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"rgba(100,100,100,0.5)",inCircle:false},
 		target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:384}, dx:7 ,rank:1
 	}
 	];
@@ -127,7 +127,6 @@ function drawBackground(){
 	ctx.fillRect(0, background.dheight/2, canvas.width, canvas.height/2)
 	ctx.closePath();
 }
-
 // swidth:1536, sheight:1536, dx:0, dy:0, dwidth:1000, dheight:1000
 function draw() {
 	elapsedTime++;
@@ -165,18 +164,36 @@ function draw() {
     	if(horse.pos.x<0 || horse.pos.x>canvas.width-300)
     		horse.dx*=-1;
     	horse.sprite.sprite_x=(horse.target_size.w*horseStatus);  
-    	if((horse.mini.arc_x<=miniMap.appearance.left_arcX || horse.mini.arc_x>=miniMap.appearance.right_arcX) && !horse.mini.inCircle){
-    		horse.mini.inCircle=true;
-    	horse.mini.arc_dx=miniMap.appearance.arc_radius*Math.cos(elapsedTime*0.02)*0.02;
-    	horse.mini.arc_dy=miniMap.appearance.arc_radius*Math.sin(elapsedTime*0.02)*0.02;
-    	}
-    	else{
-    		horse.mini.inCircle=false;
-    		horse.mini.arc_dx=horse.dx*0.3;
-    	}
     	horse.mini.arc_x+=horse.mini.arc_dx;
     	horse.mini.arc_y+=horse.mini.arc_dy;
-    	console.log(horse.mini.arc_x);
+    	if(horse.mini.arc_x>=miniMap.appearance.rect_x && horse.mini.arc_x<=miniMap.appearance.rect_x+miniMap.appearance.rect_width){    			
+    		if(horse.mini.inCircle){
+    		console.log("if inCircle");
+    		horse.mini.arc_dx=-Math.abs(horse.dx*0.3);
+
+    		
+    		
+    		}else{
+    			console.log("if !inCircle");
+    			horse.mini.arc_dx=Math.abs(horse.dx*0.3);
+        		horse.mini.arc_dy=0;
+    		}
+    	}
+    	else{
+    		if(horse.mini.inCircle){
+    			console.log("else inCircle");
+    			horse.mini.arc_dx=miniMap.appearance.arc_radius*Math.cos(elapsedTime*0.02)*0.02;
+            	horse.mini.arc_dy=miniMap.appearance.arc_radius*Math.sin(elapsedTime*0.02)*0.02;	
+    		}else{
+    			console.log("else !inCircle");
+    			horse.mini.arc_dx=miniMap.appearance.arc_radius*Math.cos(elapsedTime*0.02)*0.02;
+    			if(horse.mini.arc_x+horse.mini.arc_dx<miniMap.appearance.rect_x)
+    				horse.mini.arc_dx*=1.8;
+    			
+    		}
+        	horse.mini.inCircle=!horse.mini.inCircle;
+    	}
+    	
     });
     drawScoreBoard();
     if(background.x >= 3072) background.x =1 ;
