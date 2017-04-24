@@ -1,34 +1,38 @@
+var runHorse = document.getElementsByClassName("horseImg");
+
 /* $( function() {
 			$( ".horseSelect" ).accordion({
 				collapsible: true});
 			}); */
 
 
-// 드래그 방지
+// �뱶�옒洹� 諛⑹�
 $(document).on("dragstart", function(e) {
 	return false;
 });
 
-// 선택 방지
+// �꽑�깮 諛⑹�
 $(document).on("selectstart", function(e) {
 	return false;
 });
-$("#betBtn").on("mousedown", function() {
-	$("#betBtn").css({
+$("#start-menu").on("mousedown", function() {
+	$("#start-menu").css({
 		"background" : "#202020",
-		"border" : "9.5px solid #505050",
+		"border" : "9px solid #505050",
 		"color" : "#bbbbbb",
-		"height" : "57px",
-		"width" : "190px"
+		"height" : "47.5px",
+		"width" : "190px",
+		"borderRadius":"9px 9px 9px 9px"
 	});
 })
-$("#betBtn").on("mouseup", function() {
-	$("#betBtn").css({
+$("#start-menu").on("mouseup", function() {
+	$("#start-menu").css({
 		"background" : "gray",
 		"border" : "10px solid #505050",
 		"color" : "black",
-		"height" : "60px",
-		"width" : "200px"
+		"height" : "50px",
+		"width" : "200px",
+		"borderRadius":"10px 10px 10px 10px"
 	});
 })
 
@@ -50,11 +54,30 @@ $(document).ready(function() {
 
 function start() {
 	
-	$("#menus").hide("fade",{direction:"down",},"slow",function(){
-		init();
-	});
+	$("#menus").hide("fade",{direction:"down",},"slow",init);
 	
 }
+
+/*function runningHorse() {                  // horse Picture
+	$.each(runHorse,function(index,horse){
+		$(horse).hover(
+			ctx.beginPath();
+			ctx.drawImage(
+				horse.src = "img/horse-0",
+				0,
+				384,
+				128,
+				128,
+				0,
+				0,
+				horse.target_size.w*(1+(0.5*horse.number)),
+				horse.target_size.h*(1+(0.5*horse.number))
+			);
+			// console.log("x pos"+horse.pos.x);
+			ctx.closePath();
+		);
+	});
+}*/
 
 
 function call() {

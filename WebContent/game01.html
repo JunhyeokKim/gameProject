@@ -7,8 +7,8 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link href="css/game.css" rel="stylesheet" type="text/css">
 <body>
-	<div id="game-container">
-		<canvas id="game" width="1536" height="1000"></canvas>
+	<div id="game-container" align="center">
+		<canvas id="game" width="1536px" height="1000px"></canvas>
 		<div align="center" id="menus"> 
 			<div>
 				<h1>pent A corn 경마장</h1>
@@ -51,10 +51,14 @@
 					<td id="statusBoard"></td>
 				</tr>
 			</table>
+			금액 : <input type="text" id="betMoney"/>
+			<input type="button" value="Betting!"/><br><br>
 			<div id="start-menu">
-				game start!
+				R E A D Y
 			</div>
 		</div>
+	</div>
+	<div id="gameResult" align="center">
 	</div>
 </body>
 <script type="text/javascript" src="js/game1.js" charset="utf-8"></script>

@@ -1,8 +1,9 @@
 var canvas=document.getElementById("game");
 var ctx=canvas.getContext("2d");
+var aniNum = 40;
 var gameOver=false;
-var nearGoalLine=false;
-var iflag = false;					// game Start Check
+var winner;
+var iflag = true;					// game Start Check
 var mStatus=0;
 var elapsedTime=0;
 var background = {
@@ -10,6 +11,7 @@ var background = {
 var fence={x:0, y:0, image:{}, swidth:960, sheight:80, dx:0, dy:canvas.height/2-80, dwidth:canvas.width*8, dheight:80};
 var track={x:0, y:0, image:{}, swidth:960, sheight:342, dx:0, dy:canvas.height/2-40, dwidth:canvas.width*2, dheight:canvas.height/2};
 var players=[];
+var tempX = 0;
 var rankPos = [70, 135, 200, 260, 310];
 var rankPosSize = [1.2, 1, 0.8, 0.6, 0.6];
 var horses=[
@@ -49,10 +51,10 @@ var horses=[
       possibility:[0.2, 0.5, 0.3], dx_step:[-8,4,5], max_break:5, horseStatue:2, rankPosition:0.6
    }
    ];
-var miniMap={appearance:{color:"rgba(100,100,100,0.2)",left_arcX:160, left_arcY:160, arc_radius:100,right_arcX:260,right_arcY:160,anticlock:true,rect_x:160, rect_y:60, rect_width:100, rect_height:200}, distance:1000};
+var miniMap={appearance:{color:"rgba(100,100,100,0.2)",left_arcX:160, left_arcY:160, arc_radius:100,right_arcX:260,right_arcY:160,anticlock:true,rect_x:160, rect_y:60, rect_width:100, rect_height:200}, distance:0};
 // 160, 60, 100, 200
 var scoreBoard={box:{color:"rgba(100,100,100,0.2)",box_x:canvas.width-300, box_y:100, width:270, height:300},text:{text_color:"black", text_x:canvas.width-280,text_y:160, text_maxW:100},n:horses.length};
-var timeBoard={x:canvas.width-290,y:80, maxW:200};
+var timeBoard={x:canvas.width-290,y:80, maxW:270};
 var finishLine={image: {},swidth:80, sheight:192, dx:canvas.width, dy:600, dwidth:100, dheight:300 }
 var rank=new Array(horses.length);
 var numbers=[
@@ -61,16 +63,33 @@ var numbers=[
 	{number:3,image:{},x:0,y:0,dx:0,dy:0, swidth:7, sheight:10, dwidth:70, dheight:100}
 	];
 function collisionDetection() {
-   if(!gameOver)
-      $.each(horses,function(index,horse){
-         if(horse.pos.x>=canvas.width*0.8){
-            alert(horse.number+"번 말 우승!!");
-            gameOver=true;
-         }
-      });
+	var resMsg = new Array(5);
+	if(!gameOver)
+		$.each(horses,function(index,horse){
+			if(miniMap.distance<=0){
+				if(horse.rank==0){
+					alert("NO. "+horse.number+" horse is Won!!");
+					winner = horse.number;
+				}
+				resMsg[index] = rank[index].number;
+				gameOver = true;
+			}
+		});
+	if(gameOver&&iflag){
+		var msg="<br>";
+		$.each(resMsg, function(index,res){
+			msg +="<h"+(index+1)+">"+(index+1)+". : NO. "+res+" horse</h"+(1+index)+"><br>";
+		})
+		msg += "<h2>수고하셨습니다!</h2>";
+		$("#gameResult").html(msg);
+		$("#gameResult").fadeIn(1000);
+		//$("#gameResult").css("display","block");
+		iflag = false;
+		aniNum = 40;
+	}
 }
 
-function drawHorse() {                  // 말 그림
+function drawHorse() {                  // horse Picture
    $.each(horses,function(index,horse){
        ctx.beginPath();
           ctx.drawImage(
@@ -88,7 +107,7 @@ function drawHorse() {                  // 말 그림
           ctx.closePath();
    });
 }
-function drawMiniHorse() {                  // 말 그림
+function drawMiniHorse() {                  // scoreBoard horse
 	$.each(horses,function(index,horse){
 		ctx.beginPath();
 		ctx.drawImage(
@@ -102,7 +121,6 @@ function drawMiniHorse() {                  // 말 그림
 				horse.sec.tSize.w*horse.rankPosition,
 				horse.sec.tSize.h*horse.rankPosition
 		);
-		// console.log("x pos"+horse.pos.x);
 		ctx.closePath();
 	});
 }
@@ -127,9 +145,17 @@ function drawMiniMap(){
    }
 }
 function drawElapasedTime(){
-   ctx.beginPath();
-   ctx.font="30px Arial";
-   ctx.fillText("남은 거리 : "+(miniMap.distance-elapsedTime)+" M", timeBoard.x, timeBoard.y, timeBoard.maxW);
+	ctx.beginPath();
+	ctx.font="30px Arial";
+	for(var i=0; i<horses.length; i++){
+		if(horses[i].rank == 0);{
+			if(tempX<horses[i].pos.x) tempX = horses[i].pos.x;
+			miniMap.distance = 1000-tempX;
+		}
+	}
+	if(!gameOver)
+		ctx.fillText("Rest of Distance : "+parseInt((miniMap.distance))+" M", timeBoard.x, timeBoard.y, timeBoard.maxW);
+	else ctx.fillText("Winner : NO. "+winner+" horse", timeBoard.x, timeBoard.y, timeBoard.maxW);
    ctx.closePath();
 }
 function drawScoreBoard(){
@@ -144,25 +170,24 @@ function drawScoreBoard(){
       {
 	      case 0:
 	    	  ctx.font="36px Arial";
-	    	  ctx.fillText((idx+1)+"등 : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
+	    	  ctx.fillText((idx+1)+"st : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
 	    	  break;
 	      case 1:
-	    	  ctx.font="32px Arial";
-	    	  ctx.fillText((idx+1)+"등 : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+53*idx, 100);
+	    	  ctx.font="31px Arial";
+	    	  ctx.fillText((idx+1)+"nd : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+53*idx, 100);
 	    	  break;
 	      case 2:
 	    	  ctx.font="28px Arial";
-	    	  ctx.fillText((idx+1)+"등 : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
+	    	  ctx.fillText((idx+1)+"rd : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
 	    	  break;
 	      default:
 	    	  ctx.font="24px Arial";
-	    	  ctx.fillText((idx+1)+"등 : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
+	    	  ctx.fillText((idx+1)+"th : "+rank[idx].number, scoreBoard.text.text_x, scoreBoard.text.text_y+50*idx, 100);
       }
    }
    ctx.closePath();
 }
 function drawBackground(){
-	console.log(background);
    ctx.beginPath();
    ctx.drawImage(
          background.image,
@@ -230,7 +255,6 @@ function drawGoalLine(){
          finishLine.dheight
          );
    ctx.closePath();
-   console.log("bye");
 }
 function drawFenceBack(){
    ctx.beginPath();
@@ -279,14 +303,14 @@ function updateHorse(){
        horse.mini.arc_y+=horse.mini.arc_dy;
        if((horse.mini.arc_x>miniMap.appearance.rect_x-30 && horse.mini.arc_x<=miniMap.appearance.rect_x+miniMap.appearance.rect_width+41)
              &&(horse.mini.arc_y<miniMap.appearance.rect_y+30 ||horse.mini.arc_y>miniMap.appearance.rect_y+miniMap.appearance.rect_height-20)){             
-          if(horse.mini.loc==3 || horse.mini.loc==0){      // 좌측 상단(오른쪽 직진
-															// 코스)진입
-             // console.log("네번째 턴 x: "+ horse.mini.arc_x);
+          if(horse.mini.loc==3 || horse.mini.loc==0){      // 醫뚯륫 �긽�떒(�삤瑜몄そ 吏곸쭊
+															// 肄붿뒪)吏꾩엯
+             // console.log("�꽕踰덉㎏ �꽩 x: "+ horse.mini.arc_x);
              horse.mini.arc_dx=Math.abs(3);
              horse.mini.arc_dy=0;
              horse.mini.loc=0;
           }else if(horse.mini.loc==1 || horse.mini.loc==2){
-             // console.log("두번째 턴 x: "+ horse.mini.arc_x);
+             // console.log("�몢踰덉㎏ �꽩 x: "+ horse.mini.arc_x);
              horse.mini.loc=2;
              horse.mini.arc_dx=-Math.abs(3);
              horse.mini.arc_dy=0;
@@ -294,13 +318,13 @@ function updateHorse(){
        }
        else{
           if(horse.mini.loc==0 || horse.mini.loc==1){
-             // console.log("첫번째 턴 x: "+ horse.mini.arc_x);
+             // console.log("泥ル쾲吏� �꽩 x: "+ horse.mini.arc_x);
              horse.mini.loc=1;
              horse.mini.arc_dx=miniMap.appearance.arc_radius*Math.cos(elapsedTime*0.015)*0.018;
              horse.mini.arc_dy=miniMap.appearance.arc_radius*Math.sin(elapsedTime*0.015)*0.018;
           }
           else if(horse.mini.loc==2 || horse.mini.loc==3){
-             // console.log("세번째 턴 x: "+ horse.mini.arc_x);
+             // console.log("�꽭踰덉㎏ �꽩 x: "+ horse.mini.arc_x);
              horse.mini.loc=3;
              horse.mini.arc_dx=miniMap.appearance.arc_radius*Math.cos(elapsedTime*0.015)*0.015;
              horse.mini.arc_dy=miniMap.appearance.arc_radius*Math.sin(elapsedTime*0.015)*0.015;
@@ -379,11 +403,6 @@ function draw() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		// object drawing section
 		drawBackground();
-		if(miniMap.distance-elapsedTime<200){
-			console.log("hi")
-			nearGoalLine=true;
-			drawGoalLine();
-		}
 		drawTrack();
 		drawFenceBack();
 		drawHorse();
@@ -407,9 +426,11 @@ function draw() {
 		 * if(track.x>=480) track.x=0; else track.x+=8;
 		 */
 		// configuration of FPS
+		if(iflag)
+			if(miniMap.distance<100) aniNum = 10;
 		setTimeout(function() {
 			requestAnimationFrame(draw);
-		}, 1000/40);
+		}, 1000/aniNum);
 }
 
 

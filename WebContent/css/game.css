@@ -18,6 +18,8 @@ body{
 	position:absolute;
 	top:100px;
 	width:100%;
+	background-color:rgba(0, 0, 50, 0.5);
+	color:white;
 }
 input {
 	font-size: 1em;
@@ -28,20 +30,27 @@ th {
 	font-size: x-large;
 }
 #start-menu{
+	border-radius:10px 10px 10px 10px;
+	cursor:pointer;
+	line-height:50px;
 	font-size:1.5em;
+	margin:auto;	
+	background:gray;
+	border:10px solid #505050;
+	color:black;
+	height:50px;
+	width:200px;
 }
-#betBtn {
-	margin: auto;
-	line-height: 60px;
-	font-size: xx-large;
-	font-weight: bolder;
-	text-align: center;
-	color: black;
-	background: gray;
-	border: 10px solid #505050;
-	height: 60px;
-	width: 200px;
-}
+
 .numberImg{
 	display:none;	
+}
+
+#gameResult{
+	display:none;
+	position:absolute;
+	top:300px;
+	width:100%;
+	background-color:rgba(0, 0, 50, 0.5);
+	color:white;
 }
