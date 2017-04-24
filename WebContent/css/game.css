@@ -1,0 +1,47 @@
+body{
+	margin:0;
+}
+.status {
+	display: none;
+	font-size: large;
+	background: gray;
+	border-radius: 15px 15px 15px 15px;
+}
+#game{
+	margin:0 auto;
+}
+#game-container{
+	 position: relative;
+    text-align: center;
+}
+#menus{
+	position:absolute;
+	top:100px;
+	width:100%;
+}
+input {
+	font-size: 1em;
+	width: 200px
+}
+
+th {
+	font-size: x-large;
+}
+#start-menu{
+	font-size:1.5em;
+}
+#betBtn {
+	margin: auto;
+	line-height: 60px;
+	font-size: xx-large;
+	font-weight: bolder;
+	text-align: center;
+	color: black;
+	background: gray;
+	border: 10px solid #505050;
+	height: 60px;
+	width: 200px;
+}
+.numberImg{
+	display:none;	
+}
