@@ -1,17 +1,17 @@
+var bettingMoney = document.getElementById("betMoney");
 var runHorse = document.getElementsByClassName("horseImg");
+var player = [
+	{
+		myMoney:100000000, playerBetMoney:0, horseNum:NaN
+	}
+	]
 
-/* $( function() {
-			$( ".horseSelect" ).accordion({
-				collapsible: true});
-			}); */
-
-
-// �뱶�옒洹� 諛⑹�
+// No Drag!!!
 $(document).on("dragstart", function(e) {
 	return false;
 });
 
-// �꽑�깮 諛⑹�
+// No Select!!
 $(document).on("selectstart", function(e) {
 	return false;
 });
@@ -36,55 +36,92 @@ $("#start-menu").on("mouseup", function() {
 	});
 })
 
-$("img").on("click", function() {
-	$(".horseSelect").accordion({
-		active : false,
-		collapsible : true
-	});
-	/* $(".status").css("display","none"); */
-});
+$("#betBtn").on("click",function(){
+	betting();
+})
+
+$(".horseImg").each(function(index,item){
+	if(!document.getElementById("betBtn").disabled){
+		$(this).on("click",function(){
+			$(".horseSelect").accordion({
+				active : false,
+				collapsible : true
+			});
+			player[0].horseNum = (index+1);
+		})
+	}else alert("이미 베팅 하셨습니다.\n베팅한 말 : "+player[0].horseNum+"번 말");
+})
+
 $("#start-menu").on("click", function() {
-	start();
-	
+	if(document.getElementById("betBtn").disabled) start();
+	else alert("베팅을 먼저 해주세요.");
 })
 
 $(document).ready(function() {
 	loadLevel();
 });
 
+curMyMoney();
+
 function start() {
-	
 	$("#menus").hide("fade",{direction:"down",},"slow",init);
-	
 }
 
-/*function runningHorse() {                  // horse Picture
-	$.each(runHorse,function(index,horse){
-		$(horse).hover(
-			ctx.beginPath();
-			ctx.drawImage(
-				horse.src = "img/horse-0",
-				0,
-				384,
-				128,
-				128,
-				0,
-				0,
-				horse.target_size.w*(1+(0.5*horse.number)),
-				horse.target_size.h*(1+(0.5*horse.number))
-			);
-			// console.log("x pos"+horse.pos.x);
-			ctx.closePath();
-		);
-	});
-}*/
+function betting(){
+	player[0].playerBetMoney = bettingMoney.value;
+	if((parseInt(player[0].playerBetMoney)%1000)==0){
+		if(parseInt(player[0].playerBetMoney) <= player[0].myMoney){
+			if(Number(player[0].horseNum)){
+				document.getElementById("betBtn").disabled = true;
+				document.getElementById("betMoney").disabled = true;
+				selectFunc(player[0].horseNum);
+				player[0].myMoney = player[0].myMoney - player[0].playerBetMoney;
+				curMyMoney();
+				console.log(player[0].myMoney);
+			}else alert("말을 선택해 주세요.");
+		}else{
+			alert("Not enough money!");
+		}
+	}else alert("베팅 최소 단위는 1000원 입니다.");
+}
 
-
-function call() {
-	hohoho = document.getElementsByClassclass("horseImg");
-	if (hohoho[2].onclick) {
-		console.log(hohoho[0].onclick);
-		console.log(hohoho[0].src);
-		console.log(hohoho[1].src);
+function giveBackMoney(winner){
+	
+	console.log("Player select : "+player[0].horseNum);
+	console.log("winner : "+winner);
+	
+	if(player[0].horseNum == winner){
+		alert("You Win!");
+		switch(winner)
+		{
+			case 1:
+				player[0].myMoney += (player[0].playerBetMoney)*3.5;
+				break;
+			case 2:
+				player[0].myMoney += (player[0].playerBetMoney)*2;
+				break;
+			case 3:
+				player[0].myMoney += (player[0].playerBetMoney)*2.5;
+				break;
+			case 4:
+				player[0].myMoney += (player[0].playerBetMoney)*3;
+				break;
+			case 5:
+				player[0].myMoney += (player[0].playerBetMoney)*1.1;
+				break;
+			
+		}
+		
 	}
+	else alert("You Lose!");
+	console.log("Betting Money : "+player[0].playerBetMoney);
+	console.log("Total Money : "+player[0].myMoney);
+}
+
+function selectFunc(tdNum){
+	$(".horseSelcet").eq(tdNum).css("background","pink");
+}
+
+function curMyMoney(){
+	$("#curMoney").val(player[0].myMoney);
 }

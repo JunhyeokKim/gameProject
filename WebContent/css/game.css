@@ -3,7 +3,7 @@ body{
 }
 .status {
 	display: none;
-	font-size: large;
+	font-size: 120%;
 	background: gray;
 	border-radius: 15px 15px 15px 15px;
 }
