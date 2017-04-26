@@ -8,8 +8,11 @@ var gameOver=false;								// is the game finished?
 var winner;										// winner number
 var iflag = true;								// is the game finished? - 2
 var mStatus=0;									// mini horse statue
+var elapsedTime=0;
 var background = {								// background setting
       x:0, y:0, image:{}, swidth:3072, sheight:1536, dx:0, dy:0, dwidth:canvas.width, dheight:canvas.height/2};
+var crowd = {	
+		x:0, y:0, image:{}, swidth:2560, sheight:371, dx:0, dy:0, dwidth:canvas.width*2, dheight:canvas.height/2-48};
 var fence={x:0, y:0, image:{}, swidth:960, sheight:80, dx:0, dy:canvas.height/2-80, dwidth:canvas.width*8, dheight:80};
 // fence setting
 var track={x:0, y:0, image:{}, swidth:960, sheight:342, dx:0, dy:canvas.height/2-40, dwidth:canvas.width*2, dheight:canvas.height/2};
@@ -23,50 +26,51 @@ var horses=[									// horse object
 	      number:1,image:{}, pos:{x:0, y:canvas.height/2-10},source_size: {w:128, h:128},	// num, img, pos, src size
 	      mini:{arc_x:40,arc_y:40, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"golden"},
 	      // mini map horse
-	      sec:{image:{}, pos:{x:canvas.width-180, y:100}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
+	      sec:{image:{}, pos:{x:canvas.width-180, y:50}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
 	      // score board horse
 	      target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:0}, dx:7, rank:1, win_ratio:1.4,
 	      // target size, sprite, acceleration, rank, winning
-	      possibility:[0.6, 0.2, 0.2], dx_step:[-10,8,15], max_break:5, horseStatue:0, rankPosition:1.2,movedDistance:0
+	      possibility:[0.6, 0.2, 0.2], dx_step:[-9,7,15], max_break:5, horseStatue:0, rankPosition:1.2,movedDistance:0
 	      // moving mechanism
 	   },
 	   {
-	      number:2,image:{}, pos:{x:0, y:canvas.height/2+30},source_size: {w:128, h:128},
+	      number:2,image:{}, pos:{x:0, y:canvas.height/2+20},source_size: {w:128, h:128},
 	      mini:{arc_x:40,arc_y:40, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"brown"},
 	      sec:{image:{}, pos:{x:canvas.width-180, y:150}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
 	      target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:0}, dx:7, rank:1, win_ratio:1.9,
-	      possibility:[0.3, 0.3, 0.4], dx_step:[-30,6,10], max_break:5, horseStatue:8, rankPosition:1,movedDistance:0
+	      possibility:[0.3, 0.3, 0.4], dx_step:[-25,5,8], max_break:5, horseStatue:8, rankPosition:1,movedDistance:0
 	   },
 	   {
-	      number:3,image:{}, pos:{x:0, y:canvas.height/2+80},source_size: {w:128, h:128},
+	      number:3,image:{}, pos:{x:0, y:canvas.height/2+70},source_size: {w:128, h:128},
 	      mini:{arc_x:40,arc_y:40, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"black"},
 	      sec:{image:{}, pos:{x:canvas.width-180, y:200}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
 	      target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:0}, dx:7, rank:1, win_ratio:3.5,
-	      possibility:[0.2, 0.6, 0.2], dx_step:[-13,2,9], max_break:5, horseStatue:3, rankPosition:0.8,movedDistance:0
+	      possibility:[0.2, 0.6, 0.2], dx_step:[-13,2,7], max_break:5, horseStatue:3, rankPosition:0.8,movedDistance:0
 	   },
 	   {
 	      number:4,image:{}, pos:{x:0, y:canvas.height/2+120},source_size: {w:128, h:128},
 	      mini:{arc_x:40,arc_y:40, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"gray"},
 	      sec:{image:{}, pos:{x:canvas.width-180, y:250}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
 	      target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:0}, dx:7, rank:1, win_ratio:2.2,
-	      possibility:[0.6, 0.2, 0.2], dx_step:[-6,7,9], max_break:5, horseStatue:6, rankPosition:0.6,movedDistance:0
+	      possibility:[0.6, 0.2, 0.2], dx_step:[-5,7,9], max_break:5, horseStatue:6, rankPosition:0.6,movedDistance:0
 	   },
 	   {
 	      number:5, image:{}, pos:{x:0, y:canvas.height/2+200},source_size: {w:128, h:128},
 	      mini:{arc_x:40,arc_y:40, arc_radius:10, arc_dx:0, arc_dy:0, arc_color:"white"},
 	      sec:{image:{}, pos:{x:canvas.width-180, y:300}, sSize:{w:128, h:128}, tSize:{w:128, h:128}, sprite:{x:0, y:384}},
 	      target_size: {w:128, h:128}, sprite:{sprite_x:0,sprite_y:0}, dx:7, rank:1, win_ratio:10.0,
-	      possibility:[0.5, 0.45, 0.05], dx_step:[-20,4,80], max_break:5, horseStatue:2, rankPosition:0.6,movedDistance:0
+	      possibility:[0.5, 0.45, 0.05], dx_step:[-22,7,60], max_break:5, horseStatue:2, rankPosition:0.6,movedDistance:0
 	   }
 	   ];
 var miniMap={distance:1000,image:{},sx:40,sy:60,swidth:1000,sheight:50,dx:40,dy:60,dwidth:1000,dheight:50,color:"rgba(200,100,100,0.3)"};
 // miniMap
-var scoreBoard={box:{color:"rgba(100,100,100,0.2)",box_x:canvas.width-300, box_y:100, width:270, height:300},text:{text_color:"black", text_x:canvas.width-280,text_y:160, text_maxW:100},n:horses.length};
+var scoreBoard={box:{color:"rgba(100,100,100,0.8)",box_x:canvas.width-300, box_y:100, width:270, height:300},text:{text_color:"white", text_x:canvas.width-280,text_y:160, text_maxW:100},n:horses.length};
 // score board
 var timeBoard={x:canvas.width-290,y:80, maxW:270};								// distance board
-var finishLine={image: {},swidth:80, sheight:192, dx:canvas.width, dy:600, dwidth:100, dheight:300 }	// finish or start?
+var finishLine={image:{},x:0,y:0,swidth:282, sheight:700, dx:canvas.width+80, dy:canvas.height/2, dwidth:282, dheight:700};
 var rank=new Array(horses.length);												// rank
 var numbers=[
+	   {number:0,image:{},x:0,y:0,dx:canvas.width/2-300,dy:canvas.height/2-335, swidth:598, sheight:357, dwidth:598, dheight:357},
 	   {number:1,image:{},x:0,y:0,dx:canvas.width/2-150,dy:canvas.height/2-335, swidth:250, sheight:335, dwidth:250, dheight:335},
 	   {number:2,image:{},x:0,y:0,dx:canvas.width/2-150,dy:canvas.height/2-335, swidth:250, sheight:335, dwidth:250, dheight:335},
 	   {number:3,image:{},x:0,y:0,dx:canvas.width/2-150,dy:canvas.height/2-335, swidth:250, sheight:335, dwidth:250, dheight:335}
@@ -75,16 +79,16 @@ var startLine={image:{},x:0,y:0,swidth:282, sheight:700, dx:300, dy:canvas.heigh
 function collisionDetection() {													// finish game
 	var resMsg = new Array(5);													// result message
 	if(!gameOver)
-		$.each(horses,function(index,horse){
-			if(miniMap.distance<=0){											// rest of distance
-				if(horse.rank==0){
-					alert("NO. "+horse.number+" horse is Won!!");
-					winner = horse.number;										// save a winner number
+		if(1000-elapsedTime<=0 || rank[0].pos.x>=finishLine.dx){	
+		for(var index=0; index<horses.length;index++){
+				if(horses[index].rank==0){
+					alert("NO. "+horses[index].number+" horse is Won!!");
+					winner = horses[index].number;										// save a winner number
 				}
 				resMsg[index] = rank[index].number;
 				gameOver = true;												// almost finish
 			}
-		});
+		}
 	if(gameOver&&iflag){														// almost finish
 		var msg="<br>";
 		$.each(resMsg, function(index,res){
@@ -141,14 +145,14 @@ function drawMiniMap(){
      ctx.st
      ctx.stroke();
      $.each(rank.reverse(),function(index,horse){
-        if(1000-horse.movedDistance*0.06>0)
+        if(miniMap.distance>0)
         ctx.drawImage(
               horse.sec.image,
               horse.sec.sprite.x,
               horse.sec.sprite.y,
               horse.sec.sSize.w,
               horse.sec.sSize.h,
-              horse.movedDistance*0.02,
+              elapsedTime+horse.dx*1.4,
               horse.mini.arc_y,
               horse.sec.tSize.w,
               horse.sec.tSize.h
@@ -167,8 +171,8 @@ function drawElapasedTime(){													// rest of distance
 			miniMap.distance = 1000-tempX;	// ROD
 		}
 	}
-	if(!gameOver)
-		ctx.fillText("Rest of Distance : "+parseInt((miniMap.distance))+" M", timeBoard.x, timeBoard.y, timeBoard.maxW);
+	if(1000-elapsedTime>=0)
+		ctx.fillText("Rest of Distance : "+parseInt((1000-elapsedTime))+" M", timeBoard.x, timeBoard.y, timeBoard.maxW);
 	else ctx.fillText("Winner : NO. "+winner+" horse", timeBoard.x, timeBoard.y, timeBoard.maxW);	// winner number
    ctx.closePath();
 }
@@ -220,6 +224,27 @@ function drawBackground(dx){
 	         );
 	   ctx.closePath();
 	}
+function drawCrowd(dx,xPos){
+	if(xPos!=undefined)
+		crowd.x=xPos;
+	if(!gameOver){
+		   if(crowd.x >=2560) crowd.x = -1280 ;
+		   else crowd.x += dx;
+		}
+		   ctx.beginPath();
+		   ctx.drawImage(
+		         crowd.image,
+		         crowd.x,
+		         crowd.y,
+		         crowd.swidth,
+		         crowd.sheight,
+		         crowd.dx,
+		         crowd.dy,
+		         crowd.dwidth,
+		         crowd.dheight
+		         );
+		   ctx.closePath();
+}
 function drawTrack(){
    ctx.beginPath();
    ctx.drawImage(
@@ -282,7 +307,9 @@ function drawStartLine(dx, xPos){
 	            );
 	      ctx.closePath();
 	}
-function drawGoalLine(){
+function drawFinishLine(dx){
+	 if(finishLine.dx >=finishLine.width) finishLine.x =0 ;
+	   else finishLine.dx -= dx;
    ctx.beginPath();
    ctx.drawImage(
          finishLine.image,
@@ -361,9 +388,6 @@ function updateRank(){
 	             return 0;
 	       })
 }
-function drawCount(){
-	
-}
 function loadImage(){
 	  // init image
     $.each(horses,function(index,horse ){
@@ -379,9 +403,11 @@ function loadImage(){
     var backImage=new Image();
     backImage.src='img/hihi.png';
     var finishLineImage=new Image();
-    finishLineImage.src= 'img/finish_line.png';
+    finishLineImage.src= 'img/line.png';
     var fenceImage=new Image();
     fenceImage.src="img/fence.png";
+    var startImage=new Image();
+    startImage.src="img/start.png";
     var num1Image=new Image();
     num1Image.src="img/number1.png";
     var num2Image=new Image();
@@ -389,19 +415,21 @@ function loadImage(){
     var num3Image=new Image();
     num3Image.src="img/number3.png";
     var startLineImage=new Image();
-    startLineImage.src="img/gg.png";
-   
+    startLineImage.src="img/line.png";
+   var crowdImage=new Image();
+   crowdImage.src="img/crowddd.png";
 
    
-    
-    numbers[0].image=num1Image;
-    numbers[1].image=num2Image;
-    numbers[2].image=num3Image;
+    numbers[0].image=startImage;
+    numbers[1].image=num1Image;
+    numbers[2].image=num2Image;
+    numbers[3].image=num3Image;
     track.image=trackImage;
     fence.image=fenceImage;
     finishLine.image=finishLineImage;
     background.image=backImage;
     startLine.image=startLineImage;
+    crowd.image=crowdImage;
 }
 
 function loadLevel(){
@@ -411,31 +439,34 @@ function loadLevel(){
 }
 
 function draw() {
-
+	elapsedTime++;
 	if(miniMap.distance<=100) aniNum = 20;
 	// canvas
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// object drawing section
 	drawBackground(16);
-	drawStartLine(20);
+	drawStartLine(1);
 	drawTrack();
+	if(1000-elapsedTime<40 && 1000-elapsedTime>0)
+		drawFinishLine(24);
+	else if(1000-elapsedTime<=0 || gameOver)drawFinishLine(0);
+	drawCrowd(16);
 	drawFenceBack();
 	drawHorse();
-	drawMiniHorse();
 	drawFenceFront(8);
-	collisionDetection();
 	// object position setting
 	mStatus=(mStatus<3)?mStatus+1:0;
-	rank = new Array(horses.length);
 	updateRank();
+	collisionDetection();
 	updateHorse();
 	drawElapasedTime();
 	drawScoreBoard();
+	drawMiniHorse();
 	drawMiniMap();
 	// configuration of FPS
 	mainLoop=setTimeout(function(){
 		requestAnimationFrame(draw);
-	}, 1000/35);
+	}, 1);
 }
 
 function initView(){
@@ -452,23 +483,28 @@ function initView(){
 	      drawFenceBack();
 	      drawFenceFront(0);
 	   }
+	   crowd.image.onload=function(){
+		   drawCrowd(0);
+	   }
 }
 
 function flowView(){
 	drawBackground(8);
 	drawTrack();
+	drawCrowd(5);
 	drawFenceBack();
-	 drawStartLine(6);
+	drawStartLine(6);
 	drawFenceFront(2);
 	initLoop=setTimeout(function(){
 		if(pause) return;
 		window.requestAnimationFrame(flowView);
-		}, 1000/aniNum);
+		}, 1000/40);
 }
 function drawCount(t){
     ctx.beginPath();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground(0);
+      drawCrowd(0,0);
        drawTrack();
        drawStartLine(0,90);
        drawFenceBack();
@@ -499,7 +535,7 @@ function init(){
 	   pause=true;
 	   background.x=0;
 	   count();
-	   window.setTimeout(draw, 4000)
+	   window.setTimeout(draw, 5000)
 }
 
 
